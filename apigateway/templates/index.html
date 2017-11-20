@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>模拟Api gateway</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/index.css">
+</head>
+<body>
+<div class="chatter">
+
+  <div class="chatter_post_signup">
+    <div class="chatter_convo">
+
+          <span class="chatter_msg_item chatter_msg_item_user">
+            <a href="" class="chatter_avatar"><img src="/static/images/2.jpg" /></a>
+            <strong class="chatter_name">客服10086</strong>您好，请问有什么我可以帮助您的吗</span>
+    </div>
+    <textarea id="inputdata" name="chatter_message" placeholder="输入文字或者心情..." class="chatter_field chatter_message"></textarea>
+  </div>
+
+</div>
+
+
+</body>
+<script src="/static/jquery.js"></script>
+<script>
+	$(function(){
+	    // 摁下enter键 1.将输入内容显示在聊天框 2清空输入框内容 3提交输入内容给后台 4.根据后台返回内容将对应聊天内容写入聊天框 5.处理异常
+	    $("#inputdata").keyup(function(event){
+          if(event.keyCode ==13){
+              // 获取输入内容
+              var inputdata = $("#inputdata").val();
+              // 1.将输入内容显示在聊天框
+              var inputhtml = '<span class="chatter_msg_item chatter_msg_item_admin">'+
+                                            '<a href="" class="chatter_avatar"><img src="/static/images/1.jpg" /></a>'+
+                                            '<strong class="chatter_name">客户233</strong>'+ inputdata+'</span>';
+              $(".chatter_convo").append(inputhtml);
+              // 2清空输入框内容
+              $("#inputdata").val('');
+              // 3提交输入内容给后台
+              $.ajax({
+				url:'/ajaxdata/',
+				type:'post',
+                data:{"value": inputdata},
+				success:function(data){
+					// 判断返回值，根据返回值输入不同的句子
+                    data = parseInt(data);
+                    var returnVal = "";
+                    if(data == 0){
+                        returnVal = "打个勾是一个非常好的网站,欢迎您前来提意见/加入我们";
+                    }else if(data == 1){
+                        returnVal = "欢迎您咨询我们的课程，官网会不定时发布一些优惠活动，欢迎选购";
+                    }else{
+                        returnVal = "账号申诉请登录www.baidu.com进行申诉处理";
+                    }
+                    // 4.根据后台返回内容将对应聊天内容写入聊天框
+                    var returnHtml = '<span class="chatter_msg_item chatter_msg_item_user"> '+
+                                    '<a href="" class="chatter_avatar"><img src="/static/images/2.jpg" /></a>'+
+                                    '<strong class="chatter_name">客服10086</strong>'+returnVal+'</span>';
+                    $(".chatter_convo").append(returnHtml);
+				},
+                  // 5.处理异常
+                  error:function () {
+                      alert("您好，服务器正在维护中。。。");
+                  }
+			})
+
+          }
+        });
+	})
+</script>
+</html>
